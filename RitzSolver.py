@@ -4,17 +4,22 @@ from matplotlib import pyplot as plott
 import sympy as sym
 from array import array
 
-x_range = num.linspace(0,1,20)
-y_range = num.linspace(0,1,20)
+low_boundary = 0
+high_boundary = 1
+
+number_of_divisions = (high_boundary - low_boundary) * 20 
+
+x_range = num.linspace(low_boundary,high_boundary,number_of_divisions)
+y_range = num.linspace(low_boundary,high_boundary,number_of_divisions)
 
 
 X_Grid,Y_Grid = num.meshgrid(x_range,y_range)
 values = num.copy(X_Grid)
 
-equ_array_length = 4
+equ_array_length = 5
 x,y, f, u, a, phi = sym.symbols('x y f u a phi')
 original_function = (1 - x) * (1 - y)
-f = 1
+f = -1
 
 
 
@@ -30,9 +35,10 @@ for trial_counter in range(len(trial_functions)):
         phi = phi + sym.diff(trial_functions[trial_counter],x) * sym.diff(trial_functions[trial_counter2],x) +  sym.diff(trial_functions[trial_counter],y) * sym.diff(trial_functions[trial_counter2],y)
     sum_array1.append(a * phi + f * trial_functions[trial_counter])
     
-solution_array = [sym.solve(2 * sym.integrate(sym.integrate(q,(x,0,1)),(y,0,1)),a) for q in sum_array1]
-    
+solution_array = [sym.solve(2 * sym.integrate(sym.integrate(q,(x,low_boundary,high_boundary)),(y,low_boundary,high_boundary)),a) for q in sum_array1]
+ 
 rounded_array  = [sym.N(z[0]) for z in solution_array]
+
 
 u = 0
 for d in range(len(trial_functions)):
@@ -49,8 +55,11 @@ f = sym.lambdify([x,y],u,"numpy")
 for counter_x in range(len(x_range)):
     for counter_y in range(len(y_range)):
         values[counter_x][counter_y] = f(X_Grid[counter_x][counter_y],Y_Grid[counter_x][counter_y])
+        
+print(values[0][0])
 
 plott.contourf(X_Grid,Y_Grid,values,100)
+plott.colorbar()
 
 # print(values)
 # print(X_Grid)
