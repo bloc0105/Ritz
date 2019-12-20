@@ -9,7 +9,6 @@ y_range = num.linspace(0,1,20)
 
 
 X_Grid,Y_Grid = num.meshgrid(x_range,y_range)
-# print ("something")
 values = num.copy(X_Grid)
 
 equ_array_length = 4
@@ -19,8 +18,8 @@ f = 1
 
 
 
-array1 = [x**(n + 1) for n in range(4)]
-array2 = [y**(n + 1) for n in range(4)]
+array1 = [x**(n + 1) for n in range(equ_array_length)]
+array2 = [y**(n + 1) for n in range(equ_array_length)]
 
 trial_functions = [j * a * original_function for a in array1 for j in array2] 
 
