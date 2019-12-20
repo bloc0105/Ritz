@@ -18,8 +18,8 @@ f = 1
 
 
 
-array1 = [x**(n + 1) for n in range(equ_array_length)]
-array2 = [y**(n + 1) for n in range(equ_array_length)]
+array1 = [x**(n) for n in range(equ_array_length)]
+array2 = [y**(n) for n in range(equ_array_length)]
 
 trial_functions = [j * a * original_function for a in array1 for j in array2] 
 
