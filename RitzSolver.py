@@ -2,7 +2,6 @@ import numpy as num
 import matplotlib as plotting
 from matplotlib import pyplot as plott
 import sympy as sym
-from array import array
 
 low_boundary = 0
 high_boundary = 1
