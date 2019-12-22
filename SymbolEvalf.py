@@ -4,7 +4,7 @@ Created on Dec 17, 2019
 @author: andy
 '''
 import sympy as sym
-import numpy as num
+import num as num
 
 
 x,y,z,t = sym.symbols('x y z t')
@@ -21,7 +21,7 @@ print (a)
 
 simpleExpr = sym.sin(t)
 
-f = sym.lambdify(t,simpleExpr,"numpy")
+f = sym.lambdify(t,simpleExpr,"num")
 
 print(f(a))
 

@@ -1,4 +1,4 @@
-import numpy as num
+import num as num
 import matplotlib as plotting
 from matplotlib import pyplot as plott
 import sympy as sym
@@ -49,7 +49,7 @@ for d in range(len(trial_functions)):
 # print(rounded_array)
 # print(u)
 
-f = sym.lambdify([x,y],u,"numpy")
+f = sym.lambdify([x,y],u,"num")
 
 for counter_x in range(len(x_range)):
     for counter_y in range(len(y_range)):
@@ -57,8 +57,8 @@ for counter_x in range(len(x_range)):
         
 print(values[0][0])
 
-plott.contourf(X_Grid,Y_Grid,values,100)
-plott.colorbar()
+plott.plot(num.diff(values[0]))
+#plott.colorbar()
 
 # print(values)
 # print(X_Grid)

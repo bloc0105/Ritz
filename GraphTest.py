@@ -1,4 +1,4 @@
-import numpy
+import num
 from matplotlib import pyplot as plotting
 
 '''
@@ -6,7 +6,7 @@ Created on Dec 19, 2019
 
 @author: andy
 '''
-x = numpy.linspace(0,10,10)
+x = num.linspace(0,10,10)
 print(x)
 y = [zerp**2 for zerp in x]
 
