@@ -44,20 +44,12 @@ for xcounter in range(len(unique_exes)):
             if X_Grid[ycounter][xcounter] == exes[counter] and Y_Grid[ycounter][xcounter] == whies[counter]:
                 values[ycounter][xcounter] = zees[counter]
 
-# x = np.array([1,2,3])
-# y = np.array([1,2,3])
-# xx, yy = np.meshgrid(exes, whies)
-# X_grid = np.c_[ np.ravel(xx), np.ravel(yy) ]
-
-# zees = zees.reshape(xx.shape)
-
-#plott.contourf(X_Grid,Y_Grid,values,100)
-
-#plott.colorbar()
+plott.subplot(2,1,1)
+plott.contourf(X_Grid,Y_Grid,values,120)
+plott.colorbar()
+plott.subplot(2,1,2)
 plott.plot(np.diff(values[0]))
-# print(values)
-# print(X_Grid)
-# print(Y_Grid)
+
 plott.show()
 if __name__ == '__main__':
     pass

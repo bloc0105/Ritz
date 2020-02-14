@@ -6,7 +6,7 @@ Created on Dec 17, 2019
 import sympy as sym
 from sympy.core.numbers import oo #infinity
 
-x,t,z,nu = sym.symbols('x t z nu')
+x,t,z,nu, k_1 = sym.symbols('x t z nu varrho_1')
 sym.init_printing(use_unicode = True)
 
 func = sym.sin(x) * sym.exp(x)
@@ -30,6 +30,9 @@ zerp = sym.limit(sym.sin(x)/x,x,0)
 zapp = sym.solve(x**2 - 2,x)
 
 print(zapp)
+
+print(k_1)
+print(sym.latex(k_1))
 
 y = sym.Function('y')
 
