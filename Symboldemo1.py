@@ -5,14 +5,16 @@ Created on Dec 17, 2019
 '''
 import sympy as sym
 
-x,y = sym.symbols('x y')
+x,y,z= sym.symbols('x y z')
 
-expr = x + 2 * y
+expr = expr = (x*y**2 - 2*x*y*z + x*z**2 + y**2 - 2*y*z + z**2)/(x**2 - 1)
 
-expr = expr * x
+expr = sym.cancel(expr)
+
 
 #expr = sym.expand(expr)
 
+print(expr)
 print(sym.latex(expr))
 
 
