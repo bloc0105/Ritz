@@ -17,4 +17,4 @@ derp = sym.Eq(A * B, out_matrix)
 
 print(sym.latex(A))
 print(sym.latex(B))
-print(sym.latex(out_matrix))
+print(sym.latex(out_matrix.T))
