@@ -8,7 +8,8 @@ import numpy as np
 import sympy as sym
 # Step 1 - Discretize the Structure
 
-global_mapping = [[1,2],[2,3],[2,3],[3,4]];
+global_mapping = [[1,2],[2,3],[2,3],[3,4]]
+
 
 
 k_aa,k_bb, k_ab, k_ba = sym.symbols('k_aa k_bb k_ab k_ba')
@@ -34,11 +35,15 @@ for element_set in global_mapping:
 
         stiffness_matrix = [[global_position_matrix.row(element_set[y] - 1).col(element_set[x] - 1).tolist()[0][0] * elemental_stiffness_matrix[y][x] 
                              for x in range(2)] for y in range(2)]
-        
-        row_pos = element_set[0] - 1
-        col_pos = element_set[1] - 1
-        globally_mapped_element = global_position_matrix.row(row_pos).col(col_pos).tolist()[0][0]
-        final_matrix[row_pos][col_pos] = final_matrix[row_pos][col_pos] + globally_mapped_element
+        print (sym.latex(stiffness_matrix))
+        for rowcounter in range(2):
+            for columncounter in range(2):
+                
+                row_pos = element_set[rowcounter] - 1
+                col_pos = element_set[columncounter] - 1
+                
+                globally_mapped_element = stiffness_matrix[rowcounter][columncounter]
+                final_matrix[row_pos][col_pos] = final_matrix[row_pos][col_pos] + globally_mapped_element
 
 # Step 2 - Find all the element properties
 
