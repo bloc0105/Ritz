@@ -8,7 +8,7 @@ import numpy as np
 import sympy as sym
 # Step 1 - Discretize the Structure
 
-global_mapping = [[1,2],[2,3],[1,3]]
+global_mapping = [[2,3],[2,1],[1,3]]
 u1,v1,u2,v2,u3,v3 = sym.symbols('u1 v1 u2 v2 u3 v3')
 symbol_mapping = [[u1,v1],[u2,v2],[u3,v3]]
 
@@ -44,7 +44,7 @@ for counter in range(len(global_mapping)):
     pass
 k = np.round(k)
 
-print (global_stiffness_matrix)
+# print (global_stiffness_matrix)
 
 for main_counter in range(len(k)):
     k_matrix = k[main_counter]
@@ -52,6 +52,7 @@ for main_counter in range(len(k)):
     
     for row in k_matrix:
         for column_counter in range(len(row)):
+#             print (global_force_vector.index(uv_vector[column_counter]))
             pass
 
     
@@ -61,7 +62,7 @@ for main_counter in range(len(k)):
 
 
 # print(k)
-# print(uv)
+print(uv)
 
 # a = np.matrix([[1,2],[3,4]])
 # b = np.transpose(a)
