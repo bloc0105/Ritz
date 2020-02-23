@@ -55,25 +55,34 @@ for counter in range(len(global_mapping)):
 k = [sym.Matrix(np.round(k[counter])) for counter in range(len(k))]
 uv = [sym.Matrix(uv[counter]) for counter in range(len(uv))]
 
-
-
+#Step 4 - Assemble the Equations for the whole system
 matrix_product = [k[counter] * uv[counter] for counter in range(len(k))]
-
-
-
 equation_system = [0 for x in range(6)]
 
 for element_counter in range(len(matrix_product)):
     for counter in range(len(matrix_product[element_counter])):
         equation_system[global_force_position.index(Fuv[element_counter][counter])] += matrix_product[element_counter][counter]
-#     equation_system.append([sym.Eq(matrix_product[element_counter][counter],Fuv[element_counter][counter]) for counter in range(len(matrix_product[element_counter]))])
 
 equation_system = [sym.Eq(equation_system[counter],global_force_position[counter]) for counter in range(len(equation_system))]
 
-# print(sym.latex(sym.Matrix(equation_system)))
-
 matrix_solution = sym.linear_eq_to_matrix(equation_system,global_displacement_position)
 
-print(sym.latex(matrix_solution))
+# print(sym.latex(matrix_solution))
+
+#Step 5 - Establish Boundary Conditions 
+
+displacement_boundaries = sym.Matrix([u1,v1,0,0,0,0])
+force_boundaries = sym.Matrix([0.0222, -0.111, Fu2,Fv2,Fu3,Fv3])
+
+#Step 6 - Generate the Equations and solve them
+
+force_boundary_matrix = matrix_solution[0] * displacement_boundaries
+displacement_equations = [sym.Eq((force_boundary_matrix)[counter],force_boundaries[counter]) for counter in range(len(displacement_boundaries))]
+
+solved_variables = sym.linsolve(displacement_equations,[u1,v1,Fu2,Fv2,Fu3,Fv3])
+
+print(sym.latex(solved_variables))
+
+# print(sym.latex(displacement_equations))
 
 
