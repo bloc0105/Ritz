@@ -10,7 +10,13 @@ import sympy as sym
 
 global_mapping = [[2,3],[2,1],[1,3]]
 u1,v1,u2,v2,u3,v3 = sym.symbols('u1 v1 u2 v2 u3 v3')
-symbol_mapping = [[u1,v1],[u2,v2],[u3,v3]]
+displacement_mapping = [[u1,v1],[u2,v2],[u3,v3]]
+
+Fu1,Fv1,Fu2,Fv2,Fu3,Fv3 = sym.symbols('F_u1 F_v1 F_u2 F_v2 F_u3 F_v3')
+force_mapping = [[Fu1,Fv1],[Fu2,Fv2],[Fu3,Fv3]]
+
+global_force_position = [Fu1,Fv1,Fu2,Fv2,Fu3,Fv3]
+global_displacement_position = [u1,v1,u2,v2,u3,v3]
 
 # Step 2 - Find all the element properties
 area = [32.3 * 10 ** -4,38.7 * 10 ** -4,25.8 * 10 ** -4]
@@ -29,49 +35,45 @@ global_stiffness_matrix = np.zeros((6,6))
 k = []
 
 uv = []
+Fuv = []
 
 #Step 3 - Assemble the Element Matrix
 for counter in range(len(global_mapping)):
     
     rotation_matrix = np.matrix([[np.cos(intersection_angle[counter]),0],[np.sin(intersection_angle[counter]),0],[0,np.cos(intersection_angle[counter])],[0,np.sin(intersection_angle[counter])]])
     k.append( (modulus[counter] * area[counter]/element_length[counter]) *  rotation_matrix * elemental_stiffness_matrix*np.transpose(rotation_matrix))
-#     print(np.round(k[counter],0))
+
     zoop = []
+    zorp = []
     for counter2 in global_mapping[counter]:
-        zoop.append(symbol_mapping[counter2 - 1][0])
-        zoop.append(symbol_mapping[counter2 - 1][1])
+        zoop.append(displacement_mapping[counter2 - 1][0])
+        zoop.append(displacement_mapping[counter2 - 1][1])
+        zorp.append(force_mapping[counter2 - 1][0])
+        zorp.append(force_mapping[counter2 - 1][1])
     uv.append(zoop)
-    pass
-k = np.round(k)
-
-# print (global_stiffness_matrix)
-
-for main_counter in range(len(k)):
-    k_matrix = k[main_counter]
-    uv_vector = uv[main_counter]
-    
-    for row in k_matrix:
-        for column_counter in range(len(row)):
-#             print (global_force_vector.index(uv_vector[column_counter]))
-            pass
-
-    
+    Fuv.append(zorp)
+k = [sym.Matrix(np.round(k[counter])) for counter in range(len(k))]
+uv = [sym.Matrix(uv[counter]) for counter in range(len(uv))]
 
 
-# np.sin()
+
+matrix_product = [k[counter] * uv[counter] for counter in range(len(k))]
 
 
-# print(k)
-print(uv)
 
-# a = np.matrix([[1,2],[3,4]])
-# b = np.transpose(a)
+equation_system = [0 for x in range(6)]
+
+for element_counter in range(len(matrix_product)):
+    for counter in range(len(matrix_product[element_counter])):
+        equation_system[global_force_position.index(Fuv[element_counter][counter])] += matrix_product[element_counter][counter]
+#     equation_system.append([sym.Eq(matrix_product[element_counter][counter],Fuv[element_counter][counter]) for counter in range(len(matrix_product[element_counter]))])
+
+equation_system = [sym.Eq(equation_system[counter],global_force_position[counter]) for counter in range(len(equation_system))]
+
+# print(sym.latex(sym.Matrix(equation_system)))
+
+matrix_solution = sym.linear_eq_to_matrix(equation_system,global_displacement_position)
+
+print(sym.latex(matrix_solution))
 
 
-# c = a * b
-
-# print (a)
-# print (b)
-
-# print(c)
-# print (global_mapping)

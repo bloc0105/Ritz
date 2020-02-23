@@ -6,7 +6,11 @@ Created on Feb 20, 2020
 import sympy as sym
 
 
-k_11, k_12,k_21,k_22 = sym.symbols('k_11 k_12 k_21 k_22')
+global_matrix_size = 4
+global_symbol_matrix = [[sym.symbols('k_'+ str(x+1) +str(y+1)) for x in range(global_matrix_size)] for y in range(global_matrix_size)]
+
+print (sym.latex(sym.Matrix(global_symbol_matrix)))
+
 delta_1, delta_2 = sym.symbols('delta_1 delta_2')
 
 F1,F2 = sym.symbols('F_1 F_2')
@@ -28,5 +32,5 @@ for equation_count in range(len(doopy)):
 
 dapp = sym.linear_eq_to_matrix(solvethese,[delta_1,delta_2])
 dopp = sym.linear_eq_to_matrix(solvethese,[F1,F2])
-print (sym.latex(dapp))
-print (sym.latex(dopp))
+# print (sym.latex(dapp))
+# print (sym.latex(dopp))
