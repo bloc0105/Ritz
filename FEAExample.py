@@ -81,8 +81,21 @@ displacement_equations = [sym.Eq((force_boundary_matrix)[counter],force_boundari
 
 solved_variables = sym.linsolve(displacement_equations,[u1,v1,Fu2,Fv2,Fu3,Fv3])
 
-print(sym.latex(solved_variables))
+#Step 7 - computer the Stresses and strains in each of the elements. 
+final_displacement = [solved_variables.args[0][0].evalf(),solved_variables.args[0][1].evalf(),0,0,0,0]
 
+print(intersection_angle[0])
+element_strain = []
+for counter in range(len(uv)):
+    displacement_vector = sym.Matrix([final_displacement[global_force_vector.index(uv_objert)] for uv_objert in uv[counter]])
+    angle_matrix = sym.Matrix([[sym.cos(intersection_angle[counter]),sym.sin(intersection_angle[counter]),0,0],
+                    [0,0,sym.cos(intersection_angle[counter]),sym.sin(intersection_angle[counter])]])
+    element_strain.append(angle_matrix * displacement_vector)
+#     print(displacement_vector)
+
+# print(solved_variables.args[0][0].evalf())
+# print(sym.latex(solved_variables))
+print(sym.latex(element_strain))
 # print(sym.latex(displacement_equations))
 
 
