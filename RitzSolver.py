@@ -25,7 +25,7 @@ f = -1
 array1 = [x**(n) for n in range(equ_array_length)]
 array2 = [y**(n) for n in range(equ_array_length)]
 
-trial_functions = [j * a * original_function for a in array1 for j in array2] 
+trial_functions = [j * k * original_function for k in array1 for j in array2] 
 
 sum_array1 = []
 for trial_counter in range(len(trial_functions)):

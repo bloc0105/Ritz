@@ -1,4 +1,4 @@
-import num
+import numpy as num
 from matplotlib import pyplot as plotting
 
 '''
@@ -6,10 +6,6 @@ Created on Dec 19, 2019
 
 @author: andy
 '''
-x = num.linspace(0,10,10)
-print(x)
-y = [zerp**2 for zerp in x]
-
-plotting.plot(x,y)
-plotting.ylabel("Stuff")
-plotting.show()
+for x in range(4):
+    for y in range(4):
+        print(str(x) + str(y))
