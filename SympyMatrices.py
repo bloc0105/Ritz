@@ -4,17 +4,9 @@ Created on Feb 17, 2020
 @author: Andy Block
 '''
 import sympy as sym
-A,B = sym.symbols('A B')
+import numpy as num
 
-A = sym.Matrix([[4,4],[2,2]])
-B = sym.Matrix([[1,2,3],[1,3,3]])
 
-out_matrix = A * B
+a = [1,2,3,4,5,6,7,8]
 
-derp = sym.Eq(A * B, out_matrix)
-
-# print (out_matrix)
-
-print(sym.latex(A))
-print(sym.latex(B))
-print(sym.latex(out_matrix.T))
+print (a[0:2])

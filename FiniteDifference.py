@@ -11,7 +11,7 @@ from matplotlib import pyplot as plott
 low_boundary = 0
 high_boundary = 1
 
-range_val = 4
+range_val = 150
 
 number_of_divisions = (high_boundary - low_boundary) * range_val 
 
@@ -21,7 +21,7 @@ y_range = num.linspace(low_boundary,high_boundary,number_of_divisions)
 X_Grid,Y_Grid = num.meshgrid(x_range,y_range)
 values = num.copy(Y_Grid)
 
-f = -.5
+f = -1
 
 
 d2udx2 = f
@@ -50,11 +50,11 @@ for xcounter in range(number_of_divisions):
             diff_y = max(num.diff(y_range))
             dudy[ycounter][xcounter] = dudy[ycounter - 1][xcounter] + d2udy2 * diff_y
             values[ycounter][xcounter] = values[ycounter - 1][xcounter] + dudy[ycounter][xcounter] * diff_y
-plott.subplot(2,1,1)
+# plott.subplot(2,1,1)
 plott.contourf(X_Grid,Y_Grid,values,120)
 plott.colorbar()
-plott.subplot(2,1,2)
-plott.plot(num.diff(values[0]))
+# plott.subplot(2,1,2)
+# plott.plot(num.diff(values[0]))
 
 
 # print(values)

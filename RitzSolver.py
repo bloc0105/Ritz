@@ -35,8 +35,10 @@ for trial_counter in range(len(trial_functions)):
     sum_array1.append(a * phi + f * trial_functions[trial_counter])
     
 solution_array = [sym.solve(2 * sym.integrate(sym.integrate(q,(x,low_boundary,high_boundary)),(y,low_boundary,high_boundary)),a) for q in sum_array1]
+# print(sym.latex(sym.Matrix(solution_array)))
  
 rounded_array  = [sym.N(z[0]) for z in solution_array]
+print(sym.latex(sym.Matrix(rounded_array)))
 
 
 u = 0
@@ -57,10 +59,11 @@ for counter_x in range(len(x_range)):
         
 print(values[0][0])
 
-plott.plot(num.diff(values[0]))
+# plott.plot(num.diff(values[0]))
+# plott.contourf(X_Grid,Y_Grid,values, 20)
 #plott.colorbar()
 
 # print(values)
 # print(X_Grid)
 # print(Y_Grid)
-plott.show()
+# plott.show()
