@@ -5,7 +5,7 @@ import sympy as sym
 
 low_boundary = 0 # The lower boundary of the graph
 high_boundary = 1 # The upper boundary of the graph
-grid_points = 10 # The number of nodes that exist along the axes of the boundary (inclusive)
+grid_points = 5 # The number of nodes that exist along the axes of the boundary (inclusive)
 equ_array_length = 1
 sub_grid_size = 5
 
@@ -16,6 +16,10 @@ y_range = num.linspace(low_boundary,high_boundary,number_of_divisions)
 
 
 elements_with_coordinates =  [ [[x_range[xcounter],x_range[xcounter + 1],y_range[ycounter],y_range[ycounter + 1]] for xcounter in range(number_of_divisions - 1)] for ycounter in range(number_of_divisions - 1)]
+intercept_matrix = [[sym.symbols('u_'+str(xcounter)+str(ycounter)) for xcounter in range(number_of_divisions - 1)] for ycounter in range(number_of_divisions - 1)]
+
+# print(elements_with_coordinates)
+# print (sym.latex(sym.Matrix(intercept_matrix)))
 # print(elements_with_coordinates)
 solution_matrix = [[0 for xcounter in range(number_of_divisions - 1) ] for ycounter in range(number_of_divisions - 1)]
 # print(num.asarray(elements_with_coordinates))
@@ -31,6 +35,7 @@ f = -1
 
 array1 = [x**(n) for n in range(equ_array_length)]
 array2 = [y**(n) for n in range(equ_array_length)]
+trial_coefficients = [sym.symbols('a_' + str(counter)) for counter in range(equ_array_length**2)]
 
 trial_functions = [j * k * original_function for k in array1 for j in array2] 
 
@@ -38,23 +43,27 @@ trial_functions = [j * k * original_function for k in array1 for j in array2]
 for xcounter in range(number_of_divisions - 1): 
     for ycounter in range(number_of_divisions - 1): 
         sum_array1 = []
-        for trial_counter in range(len(trial_functions)):
+        fsum_array1 = []
+        for functional_counter in range(len(trial_functions)):
             phi = 0
-            for trial_counter2 in range(len(trial_functions)):
-                phi = phi + sym.diff(trial_functions[trial_counter],x) * sym.diff(trial_functions[trial_counter2],x) +  sym.diff(trial_functions[trial_counter],y) * sym.diff(trial_functions[trial_counter2],y)
-            sum_array1.append(a * phi + f * trial_functions[trial_counter])
-        print(str(xcounter) + ' - ' + str(ycounter))
-        solution_array = [sym.solve(2 * sym.integrate(sym.integrate(q,(x,elements_with_coordinates[xcounter][ycounter][0],elements_with_coordinates[xcounter][ycounter][1])),(y,elements_with_coordinates[xcounter][ycounter][2],elements_with_coordinates[xcounter][ycounter][3])),a) for q in sum_array1]
- 
-        rounded_array  = [sym.N(z[0]) for z in solution_array]
+            for summation_counter in range(len(trial_functions)):
+                phi = phi + (sym.diff(trial_functions[functional_counter],x) * sym.diff(trial_functions[summation_counter],x) +  sym.diff(trial_functions[functional_counter],y) * sym.diff(trial_functions[summation_counter],y)) * trial_coefficients[summation_counter]
+                sum_array1.append(phi + f * trial_functions[functional_counter])
+        functional_array = []
+        for counter in range(len(sum_array1)):
+            print('x = ' + str(elements_with_coordinates[xcounter][ycounter][0]) + ' y = ' + str(elements_with_coordinates[xcounter][ycounter][2]) + ' Integral - ' + str(counter))
+    
+            functional_array.append(sym.Eq(2 * sym.N(sym.integrate(sym.integrate(sum_array1[counter],(x,elements_with_coordinates[xcounter][ycounter][0],elements_with_coordinates[xcounter][ycounter][1])),(y,elements_with_coordinates[xcounter][ycounter][2],elements_with_coordinates[xcounter][ycounter][3])),7),0))
 
+
+        result_set = sym.linsolve(functional_array, trial_coefficients)
 
         u = 0
-        for d in range(len(trial_functions)):
-            u += solution_array[d][0] * trial_functions[d] 
-        solution_matrix[xcounter][ycounter] += u
+        for d in range(len(result_set.args[0])):
+            u = u + result_set.args[0][d] * trial_functions[d] 
+        solution_matrix[xcounter][ycounter] += u + intercept_matrix[xcounter][ycounter]
 
-
+print(sym.latex(sym.Matrix(solution_matrix)))
 X_Grid = []
 Y_Grid = []
 values = []
@@ -82,17 +91,21 @@ for xcounter in range(len(elements_with_coordinates)):
                 Y_list.append(y_lin[list_counter_y])
             X_Grid.append(X_list)
             Y_Grid.append(Y_list)
-            print(X_list)
-            print(Y_list)
+#             print(X_list)
+#             print(Y_list)
             
             
             vals = [g(X_list[counter], Y_list[counter]) for counter in range(len(X_list))]
-            print(vals)
+#             print(vals)
             values.append(vals)    
-            print('-----------------------------------------')   
+#             print('-----------------------------------------')   
 plott.subplot(121)
 plott.plot(x_plot,vals_plot, '-o')
 plott.subplot(122)
 plott.contourf(X_Grid,Y_Grid,values, 120)
 plott.colorbar()
 plott.show()
+
+def continuity_solver(equation,upper_x,lower_x,upper_y, lower_y):
+    pass
+    
