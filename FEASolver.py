@@ -5,7 +5,7 @@ import sympy as sym
 
 low_boundary = 0 # The lower boundary of the graph
 high_boundary = 1 # The upper boundary of the graph
-grid_points = 5 # The number of nodes that exist along the axes of the boundary (inclusive)
+grid_points = 10 # The number of nodes that exist along the axes of the boundary (inclusive)
 equ_array_length = 1
 sub_grid_size = 5
 
@@ -70,42 +70,82 @@ values = []
 x_plot = []
 vals_plot = []
 
+element_continuity_equations = []
+element_continuity_variables = []
 for xcounter in range(len(elements_with_coordinates)): 
     for ycounter in range(len(elements_with_coordinates[0])):
-#         x_lin = num.linspace(elements_with_coordinates[xcounter][ycounter][0], elements_with_coordinates[xcounter][ycounter][1], sub_grid_size, endpoint=(xcounter == len(elements_with_coordinates) - 1))
-#         y_lin = num.linspace(elements_with_coordinates[xcounter][ycounter][2], elements_with_coordinates[xcounter][ycounter][3], sub_grid_size, endpoint=(ycounter == len(elements_with_coordinates[0]) - 1))
-        x_lin = num.linspace(elements_with_coordinates[xcounter][ycounter][0], elements_with_coordinates[xcounter][ycounter][1], sub_grid_size, endpoint=True)
-        y_lin = num.linspace(elements_with_coordinates[xcounter][ycounter][2], elements_with_coordinates[xcounter][ycounter][3], sub_grid_size, endpoint=True)
-        g = sym.lambdify([x,y],solution_matrix[xcounter][ycounter],"numpy")
-        for list_counter_x in range(len(x_lin)):
-            X_list = []
-            Y_list = []
+        
+        
+        
+        current_corner_equation = 0
+        previous_corner_equation = 0
+        if (xcounter != len(elements_with_coordinates) - 1 and ycounter != len(elements_with_coordinates) - 1):
+            previous_corner_equation = solution_matrix[xcounter + 1][ycounter + 1].subs(x,elements_with_coordinates[xcounter + 1][ycounter+ 1][0]).subs(y,elements_with_coordinates[xcounter][ycounter][2])
             
-            
-            for list_counter_y in range(len(y_lin)):
-                if (y_lin[list_counter_y] == 0):
-                    x_plot.append(x_lin[list_counter_x])
-                    vals_plot.append(g(x_lin[list_counter_x], 0))
-                
-                X_list.append(x_lin[list_counter_x])
-                Y_list.append(y_lin[list_counter_y])
-            X_Grid.append(X_list)
-            Y_Grid.append(Y_list)
-#             print(X_list)
-#             print(Y_list)
-            
-            
-            vals = [g(X_list[counter], Y_list[counter]) for counter in range(len(X_list))]
-#             print(vals)
-            values.append(vals)    
-#             print('-----------------------------------------')   
-plott.subplot(121)
-plott.plot(x_plot,vals_plot, '-o')
-plott.subplot(122)
-plott.contourf(X_Grid,Y_Grid,values, 120)
+        current_corner_equation = solution_matrix[xcounter][ycounter].subs(x,elements_with_coordinates[xcounter][ycounter][0]).subs(y,elements_with_coordinates[xcounter][ycounter][2])
+        print(sym.latex(sym.Eq(current_corner_equation,previous_corner_equation)))
+        element_continuity_equations.append(sym.Eq(current_corner_equation,previous_corner_equation))
+        element_continuity_variables.append(intercept_matrix[xcounter][ycounter])
+        
+
+element_continuities = sym.linsolve(element_continuity_equations,element_continuity_variables)
+
+
+# print(sym.latex(sym.Matrix(element_continuity_equations)))
+# print(sym.latex(sym.Matrix(element_continuity_variables)))
+
+X_Grid = []
+Y_Grid = []
+value_grid = []
+for xcounter in range(len(elements_with_coordinates)): 
+    for ycounter in range(len(elements_with_coordinates[0])):
+        continuity_index = element_continuity_variables.index(intercept_matrix[xcounter][ycounter])
+        g = sym.lambdify([x,y],solution_matrix[xcounter][ycounter].subs(element_continuity_variables[continuity_index],element_continuities.args[0][continuity_index]),"numpy")
+        X_Grid.append([elements_with_coordinates[xcounter][ycounter][0],elements_with_coordinates[xcounter][ycounter][1],elements_with_coordinates[xcounter][ycounter][1],elements_with_coordinates[xcounter][ycounter][0]])
+        Y_Grid.append([elements_with_coordinates[xcounter][ycounter][2],elements_with_coordinates[xcounter][ycounter][3],elements_with_coordinates[xcounter][ycounter][2],elements_with_coordinates[xcounter][ycounter][3]])
+        ans1 = g(elements_with_coordinates[xcounter][ycounter][0],elements_with_coordinates[xcounter][ycounter][2])
+        ans2 = g(elements_with_coordinates[xcounter][ycounter][1],elements_with_coordinates[xcounter][ycounter][3])
+        ans3 = g(elements_with_coordinates[xcounter][ycounter][1],elements_with_coordinates[xcounter][ycounter][2])
+        ans4 = g(elements_with_coordinates[xcounter][ycounter][0],elements_with_coordinates[xcounter][ycounter][3])
+        
+        value_grid.append([ans1,ans2,ans3,ans4])
+    
+# 
+# #         x_lin = num.linspace(elements_with_coordinates[xcounter][ycounter][0], elements_with_coordinates[xcounter][ycounter][1], sub_grid_size, endpoint=(xcounter == len(elements_with_coordinates) - 1))
+# #         y_lin = num.linspace(elements_with_coordinates[xcounter][ycounter][2], elements_with_coordinates[xcounter][ycounter][3], sub_grid_size, endpoint=(ycounter == len(elements_with_coordinates[0]) - 1))
+#         x_lin = num.linspace(elements_with_coordinates[xcounter][ycounter][0], elements_with_coordinates[xcounter][ycounter][1], sub_grid_size, endpoint=True)
+#         y_lin = num.linspace(elements_with_coordinates[xcounter][ycounter][2], elements_with_coordinates[xcounter][ycounter][3], sub_grid_size, endpoint=True)
+#         g = sym.lambdify([x,y],solution_matrix[xcounter][ycounter],"numpy")
+#         for list_counter_x in range(len(x_lin)):
+#             X_list = []
+#             Y_list = []
+#             
+#             
+#             for list_counter_y in range(len(y_lin)):
+#                 if (y_lin[list_counter_y] == 0):
+#                     x_plot.append(x_lin[list_counter_x])
+#                     vals_plot.append(g(x_lin[list_counter_x], 0))
+#                 
+#                 X_list.append(x_lin[list_counter_x])
+#                 Y_list.append(y_lin[list_counter_y])
+#             X_Grid.append(X_list)
+#             Y_Grid.append(Y_list)
+# #             print(X_list)
+# #             print(Y_list)
+#             
+#             
+#             vals = [g(X_list[counter], Y_list[counter]) for counter in range(len(X_list))]
+# #             print(vals)
+#             values.append(vals)    
+# #             print('-----------------------------------------')   
+# plott.subplot(121)
+# plott.plot(x_plot,vals_plot, '-o')
+# plott.subplot(122)
+plott.contourf(X_Grid,Y_Grid,value_grid, 120)
+print(X_Grid)
+print(Y_Grid)
+print(value_grid)
 plott.colorbar()
 plott.show()
 
-def continuity_solver(equation,upper_x,lower_x,upper_y, lower_y):
-    pass
     
