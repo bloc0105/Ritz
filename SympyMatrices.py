@@ -7,6 +7,10 @@ import sympy as sym
 import numpy as num
 
 
-a = num.linspace(0,1,5,endpoint=False)
+a = num.linspace(0,1,5,endpoint=True)
 
-print(a)
+# print(a)
+
+q =  num.meshgrid(a,a)
+
+print(q)
