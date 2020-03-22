@@ -5,7 +5,7 @@ import sympy as sym
 
 low_boundary = 0 # The lower boundary of the graph
 high_boundary = 1 # The upper boundary of the graph
-grid_points = 3 # The number of nodes that exist along the axes of the boundary (inclusive)
+grid_points = 10 # The number of nodes that exist along the axes of the boundary (inclusive)
 equ_array_length = 1
 sub_grid_size = 5
 
@@ -18,20 +18,11 @@ y_range = num.linspace(low_boundary,high_boundary,number_of_divisions)
 elements_with_coordinates =  [ [[x_range[xcounter],x_range[xcounter + 1],y_range[ycounter],y_range[ycounter + 1]] for xcounter in range(number_of_divisions - 1)] for ycounter in range(number_of_divisions - 1)]
 intercept_matrix = [[sym.symbols('u_'+str(xcounter)+'_'+str(ycounter)) for xcounter in range(number_of_divisions - 1)] for ycounter in range(number_of_divisions - 1)]
 
-# print(elements_with_coordinates)
-# print (sym.latex(sym.Matrix(intercept_matrix)))
-# print(elements_with_coordinates)
 solution_matrix = [[0 for xcounter in range(number_of_divisions - 1) ] for ycounter in range(number_of_divisions - 1)]
-# print(num.asarray(elements_with_coordinates))
-# element_phi_symbols = [[sym.symbols('phi_' + str(xcounter) + str(ycounter)) for xcounter in range(number_of_divisions - 1) ] for ycounter in range(number_of_divisions - 1)]
-
-
 
 x,y, f, u, a, g = sym.symbols('x y f u a g')
 original_function = (1 - x) * (1 - y)
 f = -1
-
-
 
 array1 = [x**(n) for n in range(equ_array_length)]
 array2 = [y**(n) for n in range(equ_array_length)]
@@ -50,17 +41,12 @@ for xcounter in range(number_of_divisions - 1):
                 phi = phi + (sym.diff(trial_functions[functional_counter],x) * sym.diff(trial_functions[summation_counter],x) +  sym.diff(trial_functions[functional_counter],y) * sym.diff(trial_functions[summation_counter],y)) * trial_coefficients[summation_counter]
             sum_array1.append(phi + f * trial_functions[functional_counter])
         functional_array = []
-        print(sym.latex(sym.Matrix(sum_array1)))
         for counter in range(len(sum_array1)):
             print('x = ' + str(elements_with_coordinates[xcounter][ycounter][0]) + ' y = ' + str(elements_with_coordinates[xcounter][ycounter][2]) + ' Integral - ' + str(counter))
             
             functional_array.append(sym.Eq(2 * sym.N(sym.integrate(sym.integrate(sum_array1[counter],(x,elements_with_coordinates[xcounter][ycounter][0],elements_with_coordinates[xcounter][ycounter][1])),(y,elements_with_coordinates[xcounter][ycounter][2],elements_with_coordinates[xcounter][ycounter][3])),7),0))
-            
-            print('--------------')
-        print (sym.latex(sym.Matrix(functional_array)))
-        print (sym.latex(sym.Matrix(trial_coefficients)))
+
         result_set = sym.linsolve(functional_array, trial_coefficients)
-        print(sym.latex(result_set))
 
 
         u = 0
@@ -68,7 +54,6 @@ for xcounter in range(number_of_divisions - 1):
             u = u + result_set.args[0][d] * trial_functions[d] 
         solution_matrix[xcounter][ycounter] += u + intercept_matrix[xcounter][ycounter]
 
-# print(sym.latex(sym.Matrix(solution_matrix)))
 X_Grid = []
 Y_Grid = []
 values = []
@@ -85,50 +70,37 @@ for xcounter in range(len(elements_with_coordinates)):
         current_corner_equation = 0
         previous_corner_equation = 0
         if (xcounter != len(elements_with_coordinates) - 1 and ycounter != len(elements_with_coordinates) - 1):
-            print(sym.latex(solution_matrix[xcounter + 1][ycounter + 1]))
-            print(sym.latex(solution_matrix[xcounter][ycounter]))
-            print('-----------------------------------------------------------------')
+
             previous_corner_equation = solution_matrix[xcounter + 1][ycounter + 1].subs(x,elements_with_coordinates[xcounter + 1][ycounter+ 1][0]).subs(y,elements_with_coordinates[xcounter + 1][ycounter + 1][2])
             
         current_corner_equation = solution_matrix[xcounter][ycounter].subs(x,elements_with_coordinates[xcounter][ycounter][1]).subs(y,elements_with_coordinates[xcounter][ycounter][3])
-#         print(sym.latex(sym.Eq(current_corner_equation,previous_corner_equation)))
         element_continuity_equations.append(sym.Eq(current_corner_equation,previous_corner_equation))
         element_continuity_variables.append(intercept_matrix[xcounter][ycounter])
         
-print(sym.latex(sym.Matrix(element_continuity_equations)))
 element_continuities = sym.linsolve(element_continuity_equations,element_continuity_variables)
 
-
-# print(sym.latex(sym.Matrix(element_continuity_equations)))
-# print(sym.latex(sym.Matrix(element_continuity_variables)))
-
+print (sym.latex(sym.Matrix(element_continuities.args[0])))
 
 element_equations = [[0 for xcounter in range(len(elements_with_coordinates))]for ycounter in range(len(elements_with_coordinates[0]))]
 
 for xcounter in range(len(elements_with_coordinates)): 
     for ycounter in range(len(elements_with_coordinates[0])):
         continuity_index = element_continuity_variables.index(intercept_matrix[xcounter][ycounter])
-#         print(continuity_index)
         g = sym.lambdify([x,y],solution_matrix[xcounter][ycounter].subs(element_continuity_variables[continuity_index],element_continuities.args[0][continuity_index]),"numpy")
         element_equations[xcounter][ycounter] = g
-#         print(g)
 
-for x_range_counter in range(len(elements_with_coordinates)):
-    for y_range_counter in range(len(elements_with_coordinates[0])):
-        XG,YG = num.meshgrid([elements_with_coordinates[x_range_counter][y_range_counter][0],elements_with_coordinates[x_range_counter][y_range_counter][1]],[elements_with_coordinates[x_range_counter][y_range_counter][2],elements_with_coordinates[x_range_counter][y_range_counter][3]])
-      
-        values = [[element_equations[x_range_counter][y_range_counter](XG[y_grid_counter][x_grid_counter],YG[y_grid_counter][x_grid_counter]) for x_grid_counter in range(2)] for y_grid_counter in range(2)]
-#         print(sym.latex(sym.Matrix(XG)))
-#         print(sym.latex(sym.Matrix(YG)))
-#         print(sym.latex(sym.Matrix(values)))
-#         print('-----------------------------------------------------------')
-        plott.contourf(XG,YG,values,129)
+XG,YG = num.meshgrid(x_range,y_range)
+values = num.zeros([len(x_range), len(y_range)])
+for x_count in range(len(XG)):
+    for y_count in range(len(XG[0])):
+        for element_x_counter in range(len(elements_with_coordinates)):
+            for element_y_counter in range(len(elements_with_coordinates[0])):
+                if (XG[y_count][x_count] >= elements_with_coordinates[element_x_counter][element_y_counter][0] or XG[y_count][x_count] <= elements_with_coordinates[element_x_counter][element_y_counter][1]) and (YG[y_count][x_count] >= elements_with_coordinates[element_x_counter][element_y_counter][2] or YG[y_count][x_count] <= elements_with_coordinates[element_x_counter][element_y_counter][3]):
+                    values[y_count][x_count] = element_equations[element_x_counter][element_y_counter](XG[y_count][x_count],YG[y_count][x_count])
+        
+plott.contourf(XG,YG,values,120)
+               
 
-                
-
-# print(X_Grid)
-# print(Y_Grid)
-# print(value_grid)
 plott.colorbar()
 plott.show()
 
