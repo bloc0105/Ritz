@@ -5,7 +5,7 @@ import sympy as sym
 
 low_boundary = 0 # The lower boundary of the graph
 high_boundary = 1 # The upper boundary of the graph
-grid_points = 3 # The number of nodes that exist along the axes of the boundary (inclusive)
+grid_points = 2 # The number of nodes that exist along the axes of the boundary (inclusive)
 equ_array_length = 1
 sub_grid_size = 5
 
@@ -34,7 +34,7 @@ b = phi0 - m * x0 - n * y0
 
 phi_final = m * x + n * y + b
 
-print(sym.latex(phi_final))
+# print(sym.latex(phi_final))
 
 
 # print(sym.latex(sym.diff(phi_final,x)))
@@ -54,12 +54,15 @@ phi_diff_y = sym.diff(phi_integral, phiy)
 
 phi_solves = []
 
-phi_solves.append(phi_diff_0)
-phi_solves.append(phi_diff_x)
-phi_solves.append(phi_diff_y)
+phi_solves.append(sym.simplify(phi_diff_0))
+phi_solves.append(sym.simplify(phi_diff_x))
+phi_solves.append(sym.simplify(phi_diff_y))
 
-# print(sym.latex(sym.Matrix(phi_solves)))
+print(sym.latex(sym.Matrix(phi_solves)))
 
+q = sym.linsolve(phi_solves,[phi0,phix,phiy])
+
+print(sym.latex(q))
  
 # print (sym.latex(phi_final))
 # print (sym.latex(phi))
@@ -106,7 +109,7 @@ z_var_list = [z_matrix[counterx][countery] for counterx in range(len(z_matrix)) 
 # print(sym.latex(sym.Matrix(z_var_list)))
 # print(len(solution_list))
 
-print(sym.latex(sym.Matrix(solution_list)))
+# print(sym.latex(sym.Matrix(solution_list)))
 
 resultset = sym.linsolve(solution_list,z_var_list)
 
