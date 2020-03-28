@@ -38,7 +38,7 @@ inside_of_integral = (sym.diff(trial_phi,x))**2 + (sym.diff(trial_phi,y))**2 + 2
 J = sym.integrate(sym.integrate(inside_of_integral,(x,x0,x1)),(y,y0,y1))
 
 
-functional_array = [sym.Eq(sym.diff(J,tc.subs(x0,0).subs(x1,1).subs(y0,0).subs(y1,1)),0) for tc in trial_coefficients]
+functional_array = [sym.diff(J,tc).subs(x0,0).subs(x1,1).subs(y0,0).subs(y1,1) for tc in trial_coefficients]
 
 print(sym.latex(sym.Matrix(functional_array)))
 

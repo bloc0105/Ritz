@@ -5,7 +5,7 @@ import sympy as sym
 
 low_boundary = 0 # The lower boundary of the graph
 high_boundary = 1 # The upper boundary of the graph
-grid_points = 2 # The number of nodes that exist along the axes of the boundary (inclusive)
+grid_points = 10 # The number of nodes that exist along the axes of the boundary (inclusive)
 equ_array_length = 1
 sub_grid_size = 5
 
@@ -26,7 +26,7 @@ z_matrix = [[sym.symbols('z_x' + str(counterx) + '_y' + str(countery)) for count
 # print(sym.latex(sym.Matrix(z_matrix)))
 
 x,y, f, u = sym.symbols('x y f u')
-x0,y0,y1,x1,phi0,phix,phiy = sym.symbols('x_00 y_00 y_y0 x_0x phi_00 phi_0x phi_y0')
+x0,y0,y1,x1,phi0,phix,phiy = sym.symbols('x_0 y_0 y_1 x_1 phi_0 phi_x phi_y')
 
 m = (phix - phi0)/(x1 - x0)
 n = (phiy - phi0)/(y1 - y0)
@@ -41,7 +41,7 @@ phi_final = m * x + n * y + b
 f = -1
 phi = (sym.diff(phi_final,x))**2  +  (sym.diff(phi_final,y))**2 + 2 * f * phi_final
 
-# print(sym.latex(phi))
+print(sym.latex(phi))
 
 phi_integral = sym.integrate(sym.integrate(phi,(x,x0,x1)),(y,y0,y1))
 
@@ -58,11 +58,13 @@ phi_solves.append(sym.simplify(phi_diff_0))
 phi_solves.append(sym.simplify(phi_diff_x))
 phi_solves.append(sym.simplify(phi_diff_y))
 
-print(sym.latex(sym.Matrix(phi_solves)))
+# print(sym.latex(sym.Matrix(phi_solves)))
 
 q = sym.linsolve(phi_solves,[phi0,phix,phiy])
 
-print(sym.latex(q))
+# print(sym.latex(sym.Matrix([phi0,phix,phiy])))
+
+# print(sym.latex(q))
  
 # print (sym.latex(phi_final))
 # print (sym.latex(phi))
@@ -84,9 +86,9 @@ for xcounter in range(number_of_divisions):
             z_x = z_matrix[ycounter][xcounter + 1]
             z_0 = z_matrix[ycounter][xcounter]
         
-            phi_subs_0 = phi_diff_0.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y)
-            phi_subs_x = phi_diff_x.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y)
-            phi_subs_y = phi_diff_y.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y)
+            phi_subs_0 = sym.N(phi_diff_0.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y),2)
+            phi_subs_x = sym.N(phi_diff_x.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y),2)
+            phi_subs_y = sym.N(phi_diff_y.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y),2)
         
             solution_list.append(sym.Eq(phi_subs_0,0))
             solution_list.append(sym.Eq(phi_subs_x,0))
@@ -109,7 +111,7 @@ z_var_list = [z_matrix[counterx][countery] for counterx in range(len(z_matrix)) 
 # print(sym.latex(sym.Matrix(z_var_list)))
 # print(len(solution_list))
 
-# print(sym.latex(sym.Matrix(solution_list)))
+print(sym.latex(sym.Matrix(solution_list)))
 
 resultset = sym.linsolve(solution_list,z_var_list)
 

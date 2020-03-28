@@ -3,7 +3,7 @@ import matplotlib as plotting
 from matplotlib import pyplot as plott
 import sympy as sym
 
-low_boundary = -1
+low_boundary = 0
 high_boundary = 1
 
 number_of_divisions = (high_boundary - low_boundary) * 20 
@@ -17,7 +17,7 @@ values = num.copy(X_Grid)
 
 equ_array_length = 3
 x,y, f, u,a, phi = sym.symbols('x y f u a phi')
-original_function = (1 - x) * (1 - y) * (1 + x) * (1 + y)
+original_function = (1 - x) * (1 - y) 
 f = -1
 
 
