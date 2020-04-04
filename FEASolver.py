@@ -41,11 +41,11 @@ phi_final = m * x + n * y + b
 f = -1
 phi = (sym.diff(phi_final,x))**2  +  (sym.diff(phi_final,y))**2 + 2 * f * phi_final
 
-print(sym.latex(phi))
+# print(sym.latex(sym.simplify(phi)))
 
 phi_integral = sym.integrate(sym.integrate(phi,(x,x0,x1)),(y,y0,y1))
 
-# print(sym.latex(phi_integral))
+# print(sym.latex(sym.simplify(phi_integral)))
 
 
 phi_diff_0 = sym.diff(phi_integral, phi0)
@@ -54,17 +54,17 @@ phi_diff_y = sym.diff(phi_integral, phiy)
 
 phi_solves = []
 
-phi_solves.append(sym.simplify(phi_diff_0))
-phi_solves.append(sym.simplify(phi_diff_x))
-phi_solves.append(sym.simplify(phi_diff_y))
+phi_solves.append(sym.simplify(phi_diff_0.subs(x0,XGrid[0][0]).subs(x1,XGrid[0][1]).subs(y0,YGrid[0][0]).subs(y1,YGrid[1][0])))
+phi_solves.append(sym.simplify(phi_diff_x.subs(x0,XGrid[0][0]).subs(x1,XGrid[0][1]).subs(y0,YGrid[0][0]).subs(y1,YGrid[1][0])))
+phi_solves.append(sym.simplify(phi_diff_y.subs(x0,XGrid[0][0]).subs(x1,XGrid[0][1]).subs(y0,YGrid[0][0]).subs(y1,YGrid[1][0])))
 
-# print(sym.latex(sym.Matrix(phi_solves)))
+print(sym.latex(sym.Matrix(phi_solves)))
 
 q = sym.linsolve(phi_solves,[phi0,phix,phiy])
 
-# print(sym.latex(sym.Matrix([phi0,phix,phiy])))
+print(sym.latex(sym.Matrix([phi0,phix,phiy])))
 
-# print(sym.latex(q))
+print(sym.latex(q))
  
 # print (sym.latex(phi_final))
 # print (sym.latex(phi))
@@ -111,7 +111,7 @@ z_var_list = [z_matrix[counterx][countery] for counterx in range(len(z_matrix)) 
 # print(sym.latex(sym.Matrix(z_var_list)))
 # print(len(solution_list))
 
-print(sym.latex(sym.Matrix(solution_list)))
+# print(sym.latex(sym.Matrix(solution_list)))
 
 resultset = sym.linsolve(solution_list,z_var_list)
 

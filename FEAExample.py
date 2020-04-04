@@ -67,7 +67,16 @@ equation_system = [sym.Eq(equation_system[counter],global_force_position[counter
 
 matrix_solution = sym.linear_eq_to_matrix(equation_system,global_displacement_position)
 
-# print(sym.latex(matrix_solution))
+# print(sym.latex(sym.Matrix(equation_system)))
+# print(sym.latex(uv))
+
+# print(sym.latex(Fuv))
+
+# print(sym.latex(matrix_product))
+
+print(sym.latex(sym.Matrix(equation_system)))
+
+print(sym.latex(matrix_solution))
 
 #Step 5 - Establish Boundary Conditions 
 
@@ -84,7 +93,7 @@ solved_variables = sym.linsolve(displacement_equations,[u1,v1,Fu2,Fv2,Fu3,Fv3])
 #Step 7 - computer the Stresses and strains in each of the elements. 
 final_displacement = [solved_variables.args[0][0].evalf(),solved_variables.args[0][1].evalf(),0,0,0,0]
 
-print(intersection_angle[0])
+# print(intersection_angle[0])
 element_strain = []
 for counter in range(len(uv)):
     displacement_vector = sym.Matrix([final_displacement[global_force_vector.index(uv_objert)] for uv_objert in uv[counter]])
@@ -95,7 +104,7 @@ for counter in range(len(uv)):
 
 # print(solved_variables.args[0][0].evalf())
 # print(sym.latex(solved_variables))
-print(sym.latex(element_strain))
+# print(sym.latex(element_strain))
 # print(sym.latex(displacement_equations))
 
 
