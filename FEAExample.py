@@ -88,6 +88,8 @@ force_boundaries = sym.Matrix([0.0222, -0.111, Fu2,Fv2,Fu3,Fv3])
 force_boundary_matrix = matrix_solution[0] * displacement_boundaries
 displacement_equations = [sym.Eq((force_boundary_matrix)[counter],force_boundaries[counter]) for counter in range(len(displacement_boundaries))]
 
+print(sym.latex(force_boundary_matrix))
+print(sym.latex(sym.Matrix(displacement_equations)))
 solved_variables = sym.linsolve(displacement_equations,[u1,v1,Fu2,Fv2,Fu3,Fv3])
 
 #Step 7 - computer the Stresses and strains in each of the elements. 

@@ -58,24 +58,28 @@ phi_solves.append(sym.simplify(phi_diff_0.subs(x0,XGrid[0][0]).subs(x1,XGrid[0][
 phi_solves.append(sym.simplify(phi_diff_x.subs(x0,XGrid[0][0]).subs(x1,XGrid[0][1]).subs(y0,YGrid[0][0]).subs(y1,YGrid[1][0])))
 phi_solves.append(sym.simplify(phi_diff_y.subs(x0,XGrid[0][0]).subs(x1,XGrid[0][1]).subs(y0,YGrid[0][0]).subs(y1,YGrid[1][0])))
 
-print(sym.latex(sym.Matrix(phi_solves)))
+# print(sym.latex(sym.Matrix(phi_solves)))
 
 q = sym.linsolve(phi_solves,[phi0,phix,phiy])
 
-print(sym.latex(sym.Matrix([phi0,phix,phiy])))
+# print(sym.latex(sym.Matrix([phi0,phix,phiy])))
 
-print(sym.latex(q))
+# print(sym.latex(q))
  
 # print (sym.latex(phi_final))
 # print (sym.latex(phi))
 # print (sym.latex(phi_integral))
 # print(sym.latex(phi_diff_y))
 
-solution_list = []
-var_list= []
+
+var_list = []
+solution_matrices = []
+solution_equations = []
 for xcounter in range(number_of_divisions): 
     for ycounter in range(number_of_divisions):
+ 
         if xcounter < element_range and ycounter < element_range:
+            solution_list = []
             x_max = XGrid[ycounter][xcounter + 1]
             x_min = XGrid[ycounter][xcounter]
         
@@ -85,24 +89,41 @@ for xcounter in range(number_of_divisions):
             z_y = z_matrix[ycounter + 1][xcounter]
             z_x = z_matrix[ycounter][xcounter + 1]
             z_0 = z_matrix[ycounter][xcounter]
+            
         
             phi_subs_0 = sym.N(phi_diff_0.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y),2)
             phi_subs_x = sym.N(phi_diff_x.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y),2)
             phi_subs_y = sym.N(phi_diff_y.subs(x0,x_min).subs(x1,x_max).subs(y0,y_min).subs(y1,y_max).subs(phi0,z_0).subs(phix,z_x).subs(phiy,z_y),2)
         
-            solution_list.append(sym.Eq(phi_subs_0,0))
-            solution_list.append(sym.Eq(phi_subs_x,0))
-            solution_list.append(sym.Eq(phi_subs_y,0))
+            solution_list.append(phi_subs_0)
+            solution_list.append(phi_subs_x)
+            solution_list.append(phi_subs_y)
+            var_list.append([z_0,z_x,z_y])
             
-            var_list.append([x_min,x_max,y_min,y_max, z_0,z_x,z_y])
-        else:
-            solution_list.append(sym.Eq(z_matrix[ycounter][xcounter],0))
+            solution_matrices.append(sym.linear_eq_to_matrix(solution_list,[z_0,z_x,z_y]))
+            solution_equations.append(solution_list)
+            
+            
+
+z_vars = [z_matrix[countery][counterx] for countery  in range(len(z_matrix)) for counterx in range(len(z_matrix[0]))]
+equation_system = [0 for countery  in range(len(z_matrix)) for counterx in range(len(z_matrix[0]))]
+
+
+
+
+for solution_counter in range(len(solution_equations)):
+    for eq_counter in range(len(solution_equations[solution_counter])):
         
-#         print(sym.latex(sym.Matrix([x_min,x_max,y_min,y_max,z_0,z_x,z_y])))
+        equation_system[z_vars.index(var_list[solution_counter][eq_counter])] += solution_equations[solution_counter][eq_counter]
 
 
-z_var_list = [z_matrix[counterx][countery] for counterx in range(len(z_matrix)) for countery in range(len(z_matrix[0]))]       
+equation_system.append(z_vars[len(z_vars) - 1])
+print(sym.latex(sym.Matrix(z_vars)))  
+print(sym.latex(sym.Matrix(equation_system)))     
 
+solution_matrix =  sym.linear_eq_to_matrix(equation_system,z_vars)
+
+# print(sym.latex(solution_matrix))
 # print(sym.latex(sym.Matrix(z_var_list))) 
 # print(sym.latex(sym.Matrix(var_list)))    
    
@@ -113,12 +134,20 @@ z_var_list = [z_matrix[counterx][countery] for counterx in range(len(z_matrix)) 
 
 # print(sym.latex(sym.Matrix(solution_list)))
 
-resultset = sym.linsolve(solution_list,z_var_list)
+resultset = sym.linsolve(equation_system,z_vars)
+result_vals = [resultset.args[0][counter] for counter in range(len(z_vars))]
 
-# print(sym.latex(resultset))
+result_grid = num.zeros([number_of_divisions,number_of_divisions])
+
+for ycounter in range(len(z_matrix)):
+    for xcounter in range(len(z_matrix[0])):
+        result_grid[ycounter][xcounter] += result_vals[z_vars.index(z_matrix[ycounter][xcounter])]
+
+print(sym.latex(resultset))
 
 
-# plott.colorbar()
-# plott.show()
+plott.contourf(XGrid,YGrid,result_grid, 150)
+plott.colorbar()
+plott.show()
 
     

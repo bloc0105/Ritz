@@ -31,8 +31,8 @@ y_final  = m * x + b
 
 
 # print(sym.latex(sym.diff(phi_final,x)))
-f = -1 * x
-phi = (1 / 2 * sym.diff(y_final,x))**2  - f * y_final
+f = -1
+phi = 1 / 2 * (sym.diff(y_final,x))**2  + f * y_final
 
 # print(sym.latex(sym.simplify(phi)))
 
@@ -44,15 +44,7 @@ phi_integral = sym.integrate(phi,(x,xstart,xend))
 phi_diff_0 = sym.diff(phi_integral, ystart)
 phi_diff_x = sym.diff(phi_integral, yend)
 
-y_solves = [phi_diff_0,phi_diff_0]
-
-dupe = sym.linsolve(y_solves,[ystart,yend])
-
-# print(sym.latex(dupe))
-
-
 var_list= []
-
 solution_matrices = []
 solution_equations = []
 
@@ -69,31 +61,52 @@ for xcounter in range(number_of_divisions):
         solution_list.append(eq1)
         var_list.append([y_high,y_low])
         solution_equations.append(solution_list)
-        solution_matrices = sym.linear_eq_to_matrix(solution_list,[y_high,y_low])[0]
+        solution_matrices.append(sym.linear_eq_to_matrix(solution_list,[y_high,y_low]))
         
         
                 
-equation_system = [0 for x in range(number_of_divisions)]
+equation_system = [0 for derp in range(number_of_divisions)]
 
+# print(sym.latex(solution_matrices))
 
 
 for solution_counter in range(len(solution_equations)):
     for eq_counter in range(len(solution_equations[solution_counter])):
         
         equation_system[y_vars.index(var_list[solution_counter][eq_counter])] += solution_equations[solution_counter][eq_counter]
-    
+
+print(sym.latex(sym.Matrix(equation_system))) 
 solution_matrix =  sym.linear_eq_to_matrix(equation_system,y_vars)
 
+print(solution_matrix[0].det())
+
+solutions_with_result = solution_matrix[0].col_insert(number_of_divisions,solution_matrix[1])
+
+# solutions_with_result =[solution_matrix[0][counter].append(solution_matrix[1][counter]) for counter in range(len(solution_matrix[0]))]
+
+# print(sym.latex(sym.Matrix(solutions_with_result)))
+# print(sym.latex(solutions_with_result.rref()))
+
 # print(sym.latex(sym.Matrix(equation_system)))
-print(sym.latex(solution_matrix))
+
+# equation_system.append(y_vars[0])
+# equation_system.append(y_vars[len(y_vars) - 1])
+# print(sym.latex(solution_matrix))
+zoop = y_vars[1:len(y_vars) - 1]
+print(sym.latex(zoop))
 resultset = sym.linsolve(equation_system,y_vars)
+
+
 # print(sym.latex(sym.Matrix(solution_list)))
 # print(sym.latex(solution_matrices))
 # print(sym.latex(sym.Matrix(solution_list)))
 
-# print(sym.latex(sym.Matrix(resultset)))
+print(sym.latex(resultset))
 result_matrix = [something for something in  resultset.args[0]]
-print(sym.latex(sym.Matrix(result_matrix)))
+# print(sym.Matrix(result_matrix))
+
+# plott.plot(x_range,result_matrix)
+
 
 
 # plott.colorbar()
