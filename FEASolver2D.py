@@ -48,6 +48,7 @@ var_list= []
 solution_matrices = []
 solution_equations = []
 
+zero_boundaries = []
 for xcounter in range(number_of_divisions):
     if xcounter < number_of_divisions - 1:
         solution_list = []
@@ -55,13 +56,17 @@ for xcounter in range(number_of_divisions):
         x_low = x_range[xcounter + 1]
         y_high = y_vars[xcounter]
         y_low = y_vars[xcounter + 1]
-        eq0 = phi_diff_0.subs(xstart,x_high).subs(xend,x_low).subs(ystart,y_high).subs(yend,y_low)  
+        eq0 = phi_diff_0.subs(xstart,x_high).subs(xend,x_low).subs(ystarhttp://www.bodybuilding.com/exercises/finder/lookupt,y_high).subs(yend,y_low)  
         eq1 = phi_diff_x.subs(xstart,x_high).subs(xend,x_low).subs(ystart,y_high).subs(yend,y_low)  
         solution_list.append(eq0)
         solution_list.append(eq1)
         var_list.append([y_high,y_low])
         solution_equations.append(solution_list)
         solution_matrices.append(sym.linear_eq_to_matrix(solution_list,[y_high,y_low]))
+    
+    else:
+        zero_boundaries.append(y_high)
+        
         
         
                 
@@ -75,10 +80,19 @@ for solution_counter in range(len(solution_equations)):
         
         equation_system[y_vars.index(var_list[solution_counter][eq_counter])] += solution_equations[solution_counter][eq_counter]
 
-print(sym.latex(sym.Matrix(equation_system))) 
+# print(sym.latex(sym.Matrix(equation_system))) 
 solution_matrix =  sym.linear_eq_to_matrix(equation_system,y_vars)
 
-print(solution_matrix[0].det())
+
+print(sym.latex(solution_matrix[0]))
+
+y_vars_boundary = []
+
+for each_var in y_vars:
+    if each_var in zero_vals:
+        zero_boundaries.append(0)
+    else:
+        zero_boundaries.append(each_var)
 
 solutions_with_result = solution_matrix[0].col_insert(number_of_divisions,solution_matrix[1])
 
@@ -91,9 +105,10 @@ solutions_with_result = solution_matrix[0].col_insert(number_of_divisions,soluti
 
 # equation_system.append(y_vars[0])
 # equation_system.append(y_vars[len(y_vars) - 1])
-# print(sym.latex(solution_matrix))
+# print(sym.latex(solutio# print(sym.latex(resultset))n_matrix))
+
 zoop = y_vars[1:len(y_vars) - 1]
-print(sym.latex(zoop))
+# print(sym.latex(zoop))
 resultset = sym.linsolve(equation_system,y_vars)
 
 
@@ -101,7 +116,7 @@ resultset = sym.linsolve(equation_system,y_vars)
 # print(sym.latex(solution_matrices))
 # print(sym.latex(sym.Matrix(solution_list)))
 
-print(sym.latex(resultset))
+# print(sym.latex(resultset))
 result_matrix = [something for something in  resultset.args[0]]
 # print(sym.Matrix(result_matrix))
 
