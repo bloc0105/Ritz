@@ -25,25 +25,33 @@ phi_solved = sym.Derivative(phi,x,x) + sym.Derivative(phi,y,y)
 # print(sym.latex(phi_solved.doit()))
 f = -1
 
-
-
 array1 = [x**(n + 1) for n in range(equ_array_length)]
 array2 = [y**(n + 1) for n in range(equ_array_length)]
+
+# array1 = [x**(n) for n in range(equ_array_length)]
+# array2 = [y**(n) for n in range(equ_array_length)]
 
 trial_coefficients = [sym.symbols('a_' + str(counter)) for counter in range(equ_array_length**2)]
 trial_functions = [j * k * original_function for k in array1 for j in array2]
 trial_equations = [trial_coefficients[counter] * trial_functions[counter] for counter in range(len(trial_coefficients))]
-trial_phi = sum(trial_equations) + original_function
+trial_phi = sum(trial_equations) 
+trial_phi += original_function
 
+# print(sym.latex(sym.Matrix(trial_functions)))
+# print(sym.latex(trial_phi))
 coefficients = []
 eqs = []
-# print(sym.latex(sym.Matrix(trial_phi)))
 residual = phi_solved.subs(phi,trial_phi).doit() - f
 
 # print(sym.latex(residual))
 solution_equations = []
 for counter  in range(len(trial_equations)):
-    weighted_average = sym.integrate(sym.integrate(residual * trial_functions[counter],(x,low_boundary,high_boundary)),(y,low_boundary,high_boundary))
+    print("Computation " + str(counter) + " of " + str(len(trial_equations) - 1))
+
+    innerWight = residual * trial_functions[counter]
+#     print(innerWight)
+#     print('--------------------------------------------------------------------------------')
+    weighted_average = sym.integrate(sym.integrate(innerWight,(x,low_boundary,high_boundary)),(y,low_boundary,high_boundary))
     solution_equations.append(weighted_average)
     
 # print(sym.latex(sym.Matrix(solution_equations)))
@@ -56,11 +64,12 @@ print(sym.latex(result_set))
 # print(coefficients)
 # print(len(trial_functions))
 
-u = original_function
+# u = original_function
+u = 0
 for d in range(len(result_set.args[0])):
-    u = u + result_set.args[0][d] * trial_functions[d] 
+    u = u + result_set.args[0][d] * trial_functions[d]  
 
-
+# print(sym.latex(u))
 
 f = sym.lambdify([x,y],u,"numpy")
  
